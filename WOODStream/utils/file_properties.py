@@ -80,7 +80,7 @@ def get_name(media_msg: Message | FileId) -> str:
         if isinstance(media_msg, Message) and media_msg.media:
             media_type = media_msg.media.value
         elif media_msg.file_type:
-            media_type = media_msg.file_type.name.lower()
+                media_type = media_msg.file_type.name.lower()
         else:
             media_type = "file"
 
@@ -147,7 +147,10 @@ async def send_file(client: Client, db_id, file_id: str, message):
             new_file_id = getattr(get_media_from_message(log_msg), 'file_id', '')
             if new_file_id:
                 logging.info(f"File re-uploaded. Updating DB with new file_id: {new_file_id}")
-                await db.update_file_id(db_id, new_file_id) 
+                
+                # Corrected: Pass a dictionary to the `update_file_ids` method
+                new_file_ids = {str(client.id): new_file_id}
+                await db.update_file_ids(db_id, new_file_ids)
             else:
                 logging.error(f"Re-upload failed for db_id: {db_id}. Could not get new file_id.")
                 return None
